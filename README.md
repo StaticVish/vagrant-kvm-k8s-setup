@@ -18,10 +18,14 @@ The Master has to spin up first and then the minions.
 The KVM is quite fast in spinning the nodes hence the Minions will not start unless the master is running.
 
 As a workaround the startup is a two step process
-`vagrant ssh k8s-master-1`
+<pre><code>
+  $ vagrant ssh k8s-master-1
+</code></pre>
 
 Once the Master is started issue the following command to bootstrap the minions
-`vagrant up k8s-minion-1 k8s-minion-2 k8s-minion-3`
+<pre><code>
+  $ vagrant up k8s-minion-1 k8s-minion-2 k8s-minion-3
+</code></pre>
 
 
 
