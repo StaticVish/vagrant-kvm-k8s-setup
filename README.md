@@ -19,7 +19,7 @@ The KVM is quite fast in spinning the nodes hence the Minions will not start unl
 
 As a workaround the startup is a two step process
 <pre><code>
-  $ vagrant ssh k8s-master-1
+  $ vagrant up k8s-master-1
 </code></pre>
 
 Once the Master is started issue the following command to bootstrap the minions
