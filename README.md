@@ -28,6 +28,7 @@ Installing KVM & Vagrant
 1. `sudo apt install qemu-kvm libvirt-clients libvirt-daemon-system bridge-utils libguestfs-tools genisoimage virtinst libosinfo-bin vagrant vagrant-libvirt vagrant-mutate vagrant-sshfs python3-vagrant `
 
 2. Allow normal user to manage virtual machine
-  `$ sudo adduser ${whoami} libvirt
-  $ sudo adduser ${whoami} libvirt-qemu
-  `
+  <pre><code>
+    $ sudo adduser ${whoami} libvirt
+    $ sudo adduser ${whoami} libvirt-qemu
+  </code></pre>
