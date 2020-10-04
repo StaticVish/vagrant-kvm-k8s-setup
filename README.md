@@ -24,11 +24,16 @@ Once the Master is started issue the following command to bootstrap the minions
 `vagrant up k8s-minion-1 k8s-minion-2 k8s-minion-3`
 
 
-Installing KVM & Vagrant
-1. `sudo apt install qemu-kvm libvirt-clients libvirt-daemon-system bridge-utils libguestfs-tools genisoimage virtinst libosinfo-bin vagrant vagrant-libvirt vagrant-mutate vagrant-sshfs python3-vagrant `
+
+1.Installing KVM & Vagrant
+<pre><code>
+    $ sudo apt install qemu-kvm libvirt-clients libvirt-daemon-system bridge-utils libguestfs-tools genisoimage virtinst libosinfo-bin vagrant vagrant-libvirt vagrant-mutate vagrant-sshfs python3-vagrant
+</code></pre>
 
 2. Allow normal user to manage virtual machine
   <pre><code>
-    $ sudo adduser ${whoami} libvirt
-    $ sudo adduser ${whoami} libvirt-qemu
+    $ sudo adduser `whoami` libvirt
+    $ sudo adduser `whoami` libvirt-qemu
   </code></pre>
+
+3. Read more on How to install on Debian [here](https://wiki.debian.org/KVM)
