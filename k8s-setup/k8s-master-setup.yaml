@@ -1,0 +1,153 @@
+---
+- hosts: all
+  become: true
+  tasks:
+
+  - name: Upgrade all packages to the latest version
+    apt:
+      name: "*"
+      state: latest
+      update_cache: yes
+      force_apt_get: true
+
+  - name: Install packages that allow apt to be used over HTTPS
+    apt:
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+
+  - name: Add an apt signing key for Docker
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+
+  - name: Register lsb_release version
+    shell: lsb_release -cs
+    register: lsb_release
+
+  - name: Add apt repository for stable version
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ lsb_release.stdout }} stable
+      state: present
+
+  - name: Install docker and its dependecies
+    apt:
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+
+  - name: Set up the Docker daemon
+    copy:
+      dest: /etc/docker/daemon.json
+      content: |
+        {
+          "exec-opts": ["native.cgroupdriver=systemd"],
+          "log-driver": "json-file",
+          "log-opts": {
+            "max-size": "100m"
+          },
+          "storage-driver": "overlay2"
+        }
+
+  - name: Make systemd
+    shell: |
+      mkdir -p /etc/systemd/system/docker.service.d
+
+  - name: Docker Reload and Enable
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      enabled: yes
+      name: docker
+
+  - name: Remove swapfile from /etc/fstab
+    mount:
+      name: "{{ item }}"
+      fstype: swap
+      state: absent
+    with_items:
+      - swap
+      - none
+
+  - name: Disable swap
+    command: swapoff -a
+    when: ansible_swaptotal_mb > 0
+
+  - name: Add an apt signing key for Kubernetes
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+
+  - name: Adding apt repository for Kubernetes
+    apt_repository:
+      repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+      filename: kubernetes.list
+
+  - name: Install Kubernetes binaries
+    apt:
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+        - kubelet
+        - kubeadm
+        - kubectl
+
+  - name: Restart kubelet
+    systemd:
+      name: kubelet
+      daemon_reload: yes
+      enabled: yes
+      state: restarted
+
+
+  - name: Save the Ip Address of the master
+    shell: |
+      ip -4 addr show eth1 | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1
+    register: IPADDRESS
+
+
+  - name: Initialize the Kubernetes cluster using kubeadm
+    command: kubeadm init --apiserver-advertise-address="{{ IPADDRESS.stdout }}" --apiserver-cert-extra-sans="{{ IPADDRESS.stdout }}"  --node-name k8s-master --pod-network-cidr=192.168.0.0/16
+
+  - name: Setup kubeconfig for vagrant user
+    command: "{{ item }}"
+    with_items:
+     - mkdir -p /home/vagrant/.kube
+     - chown -R vagrant:vagrant /home/vagrant/.kube
+     - cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
+     - chown -R vagrant:vagrant /home/vagrant/.kube/config
+
+  - name: Install Tigera Calico operator
+    become: false
+    command: kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
+
+  - name: Install Calico CRDs
+    become: false
+    command: kubectl create -f https://docs.projectcalico.org/manifests/custom-resources.yaml
+
+  - name: Generate join command
+    command: kubeadm token create --print-join-command
+    register: join_command
+
+  - name: Print the Join Command to See the content
+    debug:
+      msg: "{{ join_command.stdout_lines[0] }}"
+
+  - name: Copy join command to local file
+    become: false
+    local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"

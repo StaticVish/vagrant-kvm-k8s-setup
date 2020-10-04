@@ -1,0 +1,12 @@
+
+### Vagrant ###
+.vagrant/
+
+# Log files (if you are creating logs in debug mode, uncomment this)
+*.log
+
+### Vagrant Patch ###
+*.box
+
+# K8S Join Command which is generated as part of the Setup
+k8s-setup/join-command
