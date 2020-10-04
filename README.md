@@ -22,3 +22,12 @@ As a workaround the startup is a two step process
 
 Once the Master is started issue the following command to bootstrap the minions
 `vagrant up k8s-minion-1 k8s-minion-2 k8s-minion-3`
+
+
+Installing KVM & Vagrant
+1. `sudo apt install qemu-kvm libvirt-clients libvirt-daemon-system bridge-utils libguestfs-tools genisoimage virtinst libosinfo-bin vagrant vagrant-libvirt vagrant-mutate vagrant-sshfs python3-vagrant `
+
+2. Allow normal user to manage virtual machine
+  `$ sudo adduser ${whoami} libvirt
+  $ sudo adduser ${whoami} libvirt-qemu
+  `
