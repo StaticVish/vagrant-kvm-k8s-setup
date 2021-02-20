@@ -10,3 +10,4 @@
 
 # K8S Join Command which is generated as part of the Setup
 k8s-setup/join-command
+k8s-setup/*.retry
