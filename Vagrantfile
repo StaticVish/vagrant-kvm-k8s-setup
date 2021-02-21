@@ -25,6 +25,7 @@ Vagrant.configure("2") do |config|
       master.vm.network :private_network,
         :ip => IP_NW + "#{MASTER_IP_START + i}"
       master.vm.provider :libvirt do |v|
+        v.qemu_use_session = false
         v.memory = 2048
         v.cpus= 2
       end
@@ -43,12 +44,13 @@ Vagrant.configure("2") do |config|
   end
 
   (1..NUM_MINIONS_NODE).each do |i|
-    config.vm.define "k8s-minion-#{i}" do |node|
+    config.vm.define "k8s-minion-#{i}", autostart: false do |node|
       node.vm.box = OS_IMAGE
       node.vm.hostname = "k8s-minion-#{i}"
       node.vm.network :private_network,
         :ip =>  IP_NW + "#{NODE_IP_START + i}"
       node.vm.provider :libvirt do |v|
+        v.qemu_use_session = false
         v.memory = 1024
         v.cpus= 1
       end
