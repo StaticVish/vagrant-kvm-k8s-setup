@@ -41,3 +41,11 @@ Once the Master is started issue the following command to bootstrap the minions
   </code></pre>
 
 3. Read more on How to install on Debian [here](https://wiki.debian.org/KVM)
+
+
+4. Debian 10 has an issue with lib-virt and vagrant has an issue. To Run the plugin install use the below command.
+
+```
+CFLAGS="-I/opt/vagrant/embedded/include/ruby-3.0.0/ruby" vagrant plugin install vagrant-libvirt vagrant-mutate vagrant-sshfs vagrant-dns 
+
+```

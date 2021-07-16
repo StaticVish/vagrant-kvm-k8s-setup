@@ -21,7 +21,7 @@ Vagrant.configure("2") do |config|
   (1..NUM_MASTER_NODE).each do |i|
     config.vm.define "k8s-master-#{i}" do |master|
       master.vm.box = OS_IMAGE
-      master.vm.hostname = "k8s-master-#{i}"
+      master.vm.hostname = "k8s-master-#{i}"      
       master.vm.network :private_network,
         :ip => IP_NW + "#{MASTER_IP_START + i}"
       master.vm.provider :libvirt do |v|
@@ -46,7 +46,7 @@ Vagrant.configure("2") do |config|
   (1..NUM_MINIONS_NODE).each do |i|
     config.vm.define "k8s-minion-#{i}", autostart: false do |node|
       node.vm.box = OS_IMAGE
-      node.vm.hostname = "k8s-minion-#{i}"
+      node.vm.hostname = "k8s-minion-#{i}"      
       node.vm.network :private_network,
         :ip =>  IP_NW + "#{NODE_IP_START + i}"
       node.vm.provider :libvirt do |v|
