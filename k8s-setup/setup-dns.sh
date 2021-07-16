@@ -23,5 +23,5 @@ cat >> /etc/hosts <<EOF
 192.168.5.27  k8s-minion-7
 192.168.5.28  k8s-minion-8
 192.168.5.29  k8s-minion-9
-192.168.5.30  lb
+192.168.5.41  lb
 EOF
